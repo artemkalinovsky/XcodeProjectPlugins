@@ -2,16 +2,8 @@ import Foundation
 import PackagePlugin
 
 @main
-struct GenerateLocalisationEnumPlugin: BuildToolPlugin {
-    func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
-        return [
-            .buildCommand(
-                displayName: "Running GenerateLocalisationEnumPlugin for \(target.name)",
-                executable: try context.tool(named: "").path,
-                arguments: []
-            )
-        ]
-    }
+struct GenerateLocalisationEnumPlugin: CommandPlugin {
+    func performCommand(context: PluginContext, arguments: [String]) throws {}
 }
 
 #if canImport(XcodeProjectPlugin)
@@ -19,8 +11,8 @@ import XcodeProjectPlugin
 
 // MARK: - XcodeBuildToolPlugin
 
-extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
-    func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
+extension GenerateLocalisationEnumPlugin: XcodeCommandPlugin {
+    func performCommand(context: XcodeProjectPlugin.XcodePluginContext, arguments: [String]) throws {
         let localizableStringsInputFile = context.xcodeProject.directory.appending(
             subpath: "Localisation/Supporting Files/en.lproj/Localizable.strings"
         )
@@ -61,16 +53,6 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
 
         let outputFileURL = URL(string: outputFile.string)
         try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
-
-        return [
-            .buildCommand(
-                displayName: "Running GenerateLocalisationEnumPlugin for \(target.displayName)",
-                executable: try context.tool(named: "").path,
-                arguments: [],
-                inputFiles: [localizableStringsInputFile, localizableStringsdictInputFile],
-                outputFiles: [outputFile]
-            )
-        ]
     }
 }
 #endif
