@@ -59,6 +59,7 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
         }
 
         let outputFileURL = URL(string: outputFile.string)
+        debugPrint("Output File URL: \(outputFileURL)")
         try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
         debugPrint("Output File Content: \(outputFileContent)")
 
