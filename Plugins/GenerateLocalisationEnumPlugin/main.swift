@@ -1,9 +1,25 @@
 import Foundation
 import PackagePlugin
-import XcodeProjectPlugin
 
 @main
-struct GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
+struct GenerateLocalisationEnumPlugin: BuildToolPlugin {
+    func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
+        return [
+            .buildCommand(
+                displayName: "Running GenerateLocalisationEnumPlugin for \(target.name)",
+                executable: .init(""),
+                arguments: []
+            )
+        ]
+    }
+}
+
+#if canImport(XcodeProjectPlugin)
+import XcodeProjectPlugin
+
+// MARK: - XcodeBuildToolPlugin
+
+extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
         let localizableStringsInputFile = context.xcodeProject.directory.appending(
             subpath: "Localisation/Supporting Files/en.lproj/Localizable.strings"
@@ -56,6 +72,7 @@ struct GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
         ]
     }
 }
+#endif
 
 // MARK: - Private
 
