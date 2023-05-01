@@ -10,7 +10,6 @@ struct GenerateLocalisationEnumExecutable: ParsableCommand {
         let path = "Localisation/Supporting Files/en.lproj/"
         let stringsURL = URL(fileURLWithPath: path + "Localizable.strings")
         let stringsdictURL = URL(fileURLWithPath: path + "Localizable.stringsdict")
-//        let outputURL = URL(fileURLWithPath: "Localisation/Generated Resources/LocalizationKey.swift")
         debugPrint(stringsURL)
 
         var outputFileContent = GenerateLocalisationEnumExecutable.template
@@ -38,13 +37,8 @@ struct GenerateLocalisationEnumExecutable: ParsableCommand {
         }
 
         debugPrint("Output File URL: \(output)")
-
-        try outputFileContent.write(toFile: output, atomically: true, encoding: .utf8)
-//        try URL(string: output).map {
-//            try outputFileContent.write(to: $0, atomically: true, encoding: .utf8)
-//        }
-
         debugPrint("Output File Content: \(outputFileContent)")
+        try outputFileContent.write(toFile: output, atomically: true, encoding: .utf8)
      }
 }
 
@@ -60,8 +54,8 @@ private extension GenerateLocalisationEnumExecutable {
     {KEYS}
 
     public enum Plurals: String {
-    {PLURALS}
-    }
+        {PLURALS}
+      }
     }
 
     // MARK: CaseIterable
