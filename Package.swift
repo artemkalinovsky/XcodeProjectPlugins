@@ -17,10 +17,20 @@ let package = Package(
             targets: ["GenerateLocalisationEnumPlugin"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0")
+    ],
     targets: [
+        .executableTarget(
+            name: "GenerateLocalisationEnumExecutable",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
+            ]
+        ),
         .plugin(
             name: "GenerateLocalisationEnumPlugin",
-            capability: .buildTool()
+            capability: .buildTool(),
+            dependencies: [.target(name: "GenerateLocalisationEnumExecutable")]
         )
     ]
 )
