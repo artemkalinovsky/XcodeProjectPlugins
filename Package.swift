@@ -20,10 +20,7 @@ let package = Package(
     targets: [
         .plugin(
             name: "GenerateLocalisationEnumPlugin",
-            capability: .command(
-                intent: .custom(verb: "GenerateLocalisationEnumPlugin", description: "GenerateLocalisationEnumPlugin"),
-                permissions: [.writeToPackageDirectory(reason: "Generate Localisation Enum")]
-            )
+            capability: .buildTool()
         )
     ]
 )

@@ -2,8 +2,18 @@ import Foundation
 import PackagePlugin
 
 @main
-struct GenerateLocalisationEnumPlugin: CommandPlugin {
-    func performCommand(context: PluginContext, arguments: [String]) throws {}
+struct GenerateLocalisationEnumPlugin: BuildToolPlugin {
+    func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
+        debugPrint(context)
+        return []
+        //        return [
+        //            .buildCommand(
+        //                displayName: "Running GenerateLocalisationEnumPlugin for \(target.name)",
+        //                executable: try context.tool(named: "").path,
+        //                arguments: []
+        //            )
+        //        ]
+    }
 }
 
 #if canImport(XcodeProjectPlugin)
@@ -11,48 +21,60 @@ import XcodeProjectPlugin
 
 // MARK: - XcodeBuildToolPlugin
 
-extension GenerateLocalisationEnumPlugin: XcodeCommandPlugin {
-    func performCommand(context: XcodeProjectPlugin.XcodePluginContext, arguments: [String]) throws {
-        let localizableStringsInputFile = context.xcodeProject.directory.appending(
-            subpath: "Localisation/Supporting Files/en.lproj/Localizable.strings"
-        )
-        let localizableStringsdictInputFile = context.xcodeProject.directory.appending(
-            subpath: "Localisation/Supporting Files/en.lproj/Localizable.stringsdict"
-        )
-        let outputFile = context.xcodeProject.directory.appending(
-            subpath: "Localisation/Generated Resources/LocalizationKey.swift"
-        )
-
-        var outputFileContent = GenerateLocalisationEnumPlugin.template
-
-        if let localizableStringsURL = URL(string: localizableStringsInputFile.string),
-           let strings = NSDictionary(contentsOf: localizableStringsURL) as? Dictionary<String, Any> {
-            var output = ""
-            for key in strings.keys.sorted() {
-                output += "case \(fixKeyName(key)) = \"\(key)\"\n"
-            }
-            outputFileContent = outputFileContent.replacingOccurrences(of: "{KEYS}", with: output)
-        }
-
-        let localizableStringsdictURL = URL(string: localizableStringsdictInputFile.string)
-        let localizableStringsdictData = try localizableStringsdictURL.map { try Data(contentsOf: $0) }
-        let stringsDict = try localizableStringsdictData.flatMap {
-            try PropertyListSerialization.propertyList(
-                from: $0,
-                options: .mutableContainers,
-                format: nil
-            ) as? [String: Any]
-        }
-        if let stringsDict {
-            var output = ""
-            for key in stringsDict.keys.sorted() {
-                output += "case \(fixKeyName(key))\n"
-            }
-            outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
-        }
-
-        let outputFileURL = URL(string: outputFile.string)
-        try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
+extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
+    func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
+        debugPrint(context)
+        return []
+        //        let localizableStringsInputFile = context.xcodeProject.directory.appending(
+        //            subpath: "Localisation/Supporting Files/en.lproj/Localizable.strings"
+        //        )
+        //        let localizableStringsdictInputFile = context.xcodeProject.directory.appending(
+        //            subpath: "Localisation/Supporting Files/en.lproj/Localizable.stringsdict"
+        //        )
+        //        let outputFile = context.xcodeProject.directory.appending(
+        //            subpath: "Localisation/Generated Resources/LocalizationKey.swift"
+        //        )
+        //
+        //        var outputFileContent = GenerateLocalisationEnumPlugin.template
+        //
+        //        if let localizableStringsURL = URL(string: localizableStringsInputFile.string),
+        //           let strings = NSDictionary(contentsOf: localizableStringsURL) as? Dictionary<String, Any> {
+        //            var output = ""
+        //            for key in strings.keys.sorted() {
+        //                output += "case \(fixKeyName(key)) = \"\(key)\"\n"
+        //            }
+        //            outputFileContent = outputFileContent.replacingOccurrences(of: "{KEYS}", with: output)
+        //        }
+        //
+        //        let localizableStringsdictURL = URL(string: localizableStringsdictInputFile.string)
+        //        let localizableStringsdictData = try localizableStringsdictURL.map { try Data(contentsOf: $0) }
+        //        let stringsDict = try localizableStringsdictData.flatMap {
+        //            try PropertyListSerialization.propertyList(
+        //                from: $0,
+        //                options: .mutableContainers,
+        //                format: nil
+        //            ) as? [String: Any]
+        //        }
+        //        if let stringsDict {
+        //            var output = ""
+        //            for key in stringsDict.keys.sorted() {
+        //                output += "case \(fixKeyName(key))\n"
+        //            }
+        //            outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
+        //        }
+        //
+        //        let outputFileURL = URL(string: outputFile.string)
+        //        try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
+        //
+        //        return [
+        //              .buildCommand(
+        //                  displayName: "Running GenerateLocalisationEnumPlugin for \(target.displayName)",
+        //                  executable: try context.tool(named: "").path,
+        //                  arguments: [],
+        //                  inputFiles: [localizableStringsInputFile, localizableStringsdictInputFile],
+        //                  outputFiles: [outputFile]
+        //              )
+        //          ]
     }
 }
 #endif
