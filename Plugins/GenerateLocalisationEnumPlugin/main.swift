@@ -31,13 +31,6 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
             subpath: "Localisation/Generated Resources/LocalizationKey.swift"
         )
 
-        let inputFiles = context.xcodeProject.directory.appending(
-            subpath: "Localisation/Supporting Files/en.lproj"
-        )
-        let outputFiles = context.xcodeProject.directory.appending(
-            subpath: "Localisation/Generated Resources"
-        )
-
         var outputFileContent = GenerateLocalisationEnumPlugin.template
 
         if let localizableStringsURL = URL(string: localizableStringsInputFile.string),
@@ -66,15 +59,16 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
             outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
         }
 
-        try outputFileContent.write(toFile: outputFile.string, atomically: true, encoding: .utf8)
+        let outputFileURL = URL(string: outputFile.string)
+        try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
 
         return [
             .buildCommand(
                 displayName: "Running GenerateLocalisationEnumPlugin for \(target.displayName)",
                 executable: try context.tool(named: "").path,
                 arguments: [],
-                inputFiles: [inputFiles],
-                outputFiles: [outputFiles]
+                inputFiles: [localizableStringsInputFile, localizableStringsdictInputFile],
+                outputFiles: [outputFile]
             )
         ]
     }
