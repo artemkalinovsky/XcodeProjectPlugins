@@ -13,11 +13,17 @@ import XcodeProjectPlugin
 
 extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
+        let outputPath = context.pluginWorkDirectory.appending("GeneratedEnum.swift")
+
         return [
             .buildCommand(
                 displayName: "Generate Localisation Enum for \(target.displayName)",
                 executable: try context.tool(named: "GenerateLocalisationEnumExecutable").path,
-                arguments: []
+                arguments: [
+                    "--output",
+                    outputPath
+                ],
+                outputFiles: [outputPath]
             )
         ]
     }

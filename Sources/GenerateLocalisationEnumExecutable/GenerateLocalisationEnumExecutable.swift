@@ -2,15 +2,16 @@ import Foundation
 import ArgumentParser
 
 @main
-struct GenerateLocalisationEnumExecutable: ParsableCommand {    
+struct GenerateLocalisationEnumExecutable: ParsableCommand {
+    @Option(help: "The path where the generated files will be created")
+    var output: String
+
     func run() throws {
         let path = "Localisation/Supporting Files/en.lproj/"
         let stringsURL = URL(fileURLWithPath: path + "Localizable.strings")
         let stringsdictURL = URL(fileURLWithPath: path + "Localizable.stringsdict")
-        let outputURL = URL(fileURLWithPath: "Localisation/Generated Resources/LocalizationKey.swift")
-
+//        let outputURL = URL(fileURLWithPath: "Localisation/Generated Resources/LocalizationKey.swift")
         debugPrint(stringsURL)
-        debugPrint(outputURL)
 
         var outputFileContent = GenerateLocalisationEnumExecutable.template
 
@@ -36,8 +37,12 @@ struct GenerateLocalisationEnumExecutable: ParsableCommand {
             outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
         }
 
-        debugPrint("Output File URL: \(outputURL)")
-        try outputFileContent.write(to: outputURL, atomically: true, encoding: .utf8)
+        debugPrint("Output File URL: \(output)")
+
+        try URL(string: output).map {
+            try outputFileContent.write(to: $0, atomically: true, encoding: .utf8)
+        }
+
         debugPrint("Output File Content: \(outputFileContent)")
      }
 }
