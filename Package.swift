@@ -20,16 +20,11 @@ let package = Package(
     targets: [
         .plugin(
             name: "GenerateLocalisationEnumPlugin",
-            capability: .buildTool()
+            capability: .command(
+                intent: .custom(verb: "GenerateLocalisationEnumPlugin", description: "GenerateLocalisationEnumPlugin"),
+                permissions: [.writeToPackageDirectory(reason: "Generate Localisation Enum")]
+            )
         )
-//        .plugin(
-//            name: "SwiftLintFix",
-//            capability: .command(
-//                intent: .sourceCodeFormatting(),
-//                permissions: [.writeToPackageDirectory(reason: "Fixes fixable lint issues")]
-//            ),
-//            dependencies: ["SwiftLintBinary"]
-//        ),
     ]
 )
 
