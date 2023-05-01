@@ -39,7 +39,6 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
                 output += "case \(fixKeyName(key)) = \"\(key)\"\n"
             }
             outputFileContent = outputFileContent.replacingOccurrences(of: "{KEYS}", with: output)
-            debugPrint(outputFileContent)
         }
 
         let localizableStringsdictURL = URL(string: localizableStringsdictInputFile.string)
@@ -57,11 +56,11 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
                 output += "case \(fixKeyName(key))\n"
             }
             outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
-            debugPrint(outputFileContent)
         }
 
         let outputFileURL = URL(string: outputFile.string)
         try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
+        debugPrint("Output File Content: \(outputFileContent)")
 
         return []
         //                return [
