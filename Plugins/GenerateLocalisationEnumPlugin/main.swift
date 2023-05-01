@@ -15,8 +15,6 @@ import XcodeProjectPlugin
 
 extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
-
-
         let localizableStringsInputFile = context.xcodeProject.directory.appending(
             subpath: "Localisation/Supporting Files/en.lproj/Localizable.strings"
         )
@@ -27,13 +25,16 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
             subpath: "Localisation/Generated Resources/LocalizationKey.swift"
         )
 
+        let path = "Localisation/Supporting Files/en.lproj/"
+        let stringsURL = URL(fileURLWithPath: path + "Localizable.strings")
+        let outputURL = URL(fileURLWithPath: "Localisation/Generated Resources/LocalizationKey.swift")
+
         debugPrint(localizableStringsInputFile)
         debugPrint(outputFile)
 
         var outputFileContent = GenerateLocalisationEnumPlugin.template
 
-        if let localizableStringsURL = URL(string: localizableStringsInputFile.string),
-           let strings = NSDictionary(contentsOf: localizableStringsURL) as? Dictionary<String, Any> {
+        if let strings = NSDictionary(contentsOf: stringsURL) as? Dictionary<String, Any> {
             var output = ""
             for key in strings.keys.sorted() {
                 output += "case \(fixKeyName(key)) = \"\(key)\"\n"
@@ -58,9 +59,11 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
             outputFileContent = outputFileContent.replacingOccurrences(of: "{PLURALS}", with: output)
         }
 
-        let outputFileURL = URL(string: outputFile.string)
-        debugPrint("Output File URL: \(outputFileURL)")
-        try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
+//        let outputFileURL = URL(string: outputFile.string)
+//        try outputFileURL.map { try outputFileContent.write(to: $0, atomically: true, encoding: .utf8) }
+
+        debugPrint("Output File URL: \(outputURL)")
+        try outputFileContent.write(to: outputURL, atomically: true, encoding: .utf8)
         debugPrint("Output File Content: \(outputFileContent)")
 
         return []
