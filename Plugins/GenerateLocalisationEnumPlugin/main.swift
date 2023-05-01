@@ -7,7 +7,7 @@ struct GenerateLocalisationEnumPlugin: BuildToolPlugin {
         return [
             .buildCommand(
                 displayName: "Running GenerateLocalisationEnumPlugin for \(target.name)",
-                executable: .init(""),
+                executable: try context.tool(named: "").path,
                 arguments: []
             )
         ]
@@ -64,7 +64,7 @@ extension GenerateLocalisationEnumPlugin: XcodeBuildToolPlugin {
         return [
             .buildCommand(
                 displayName: "Running GenerateLocalisationEnumPlugin for \(target.displayName)",
-                executable: .init(""),
+                executable: try context.tool(named: "").path,
                 arguments: [],
                 inputFiles: [localizableStringsInputFile, localizableStringsdictInputFile],
                 outputFiles: [outputFile]
