@@ -39,6 +39,7 @@ struct GenerateLocalisationEnumExecutable: ParsableCommand {
 
         debugPrint("Output File URL: \(output)")
 
+        try outputFileContent.write(toFile: output, atomically: true, encoding: .utf8)
 //        try URL(string: output).map {
 //            try outputFileContent.write(to: $0, atomically: true, encoding: .utf8)
 //        }
